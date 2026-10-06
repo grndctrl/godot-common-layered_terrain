@@ -1,3 +1,5 @@
 .DS_Store
-.uid
-.import
+
+# Godot generated files
+*.uid
+*.import
