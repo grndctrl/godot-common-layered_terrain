@@ -9,7 +9,7 @@ Generation is deterministic: each cell depends only on its coordinates and the n
 | Script | Class | Purpose |
 |---|---|---|
 | `layered_terrain.gd` | `LayeredTerrain` (Node2D) | Generates a fixed `map_size` map. |
-| `infinite_layered_terrain.gd` | `InfiniteLayeredTerrain` (extends `LayeredTerrain`) | Streams a `map_size` window centred on a `follow` node. |
+| `infinite_layered_terrain.gd` | `InfiniteLayeredTerrain` (extends `LayeredTerrain`) | Streams chunks around a `follow` node, enough to fill the view. |
 | `layered_terrain_biome.gd` | `LayeredTerrainBiome` (TileMapLayer) | One elevation band, a child of the terrain: weight, atlas source, relief noise and amplitude. |
 
 ## Requirements
@@ -37,13 +37,24 @@ The map regenerates whenever you edit a property, the noise, or a biome, and whe
 |---|---|---|
 | `noise` | — | `FastNoiseLite` for elevation. |
 | `layer_height` | `8` | Pixels each layer sits above the one below. |
-| `map_size` | `36×36` | Map size in cells; for the infinite variant, the window size. |
+| `map_size` | `36×36` | Map size in cells. Not used by the infinite variant. |
 | `lower_threshold` | `0.0` | Cells with elevation below this are left empty. |
 | `upper_threshold` | `1.0` | Cells with elevation above this are left empty. |
 | `base_height` | `0` | Pixels every layer is lifted, to stack this terrain on another. |
 
 ### InfiniteLayeredTerrain
-Adds `follow` (Node2D): the window stays centred on this node's cell, and cells are generated or erased as it moves. Leave it empty for a fixed window at the origin. Make `map_size` large enough to cover the screen.
+Keeps the cells that can show in a viewport-sized view centred on `follow`, so it fills the screen at any resolution without setting a size.
+
+| Property | Default | Description |
+|---|---|---|
+| `follow` | — | Node2D the view is centred on. Use the camera: a target the camera trails would put the view off-centre. Empty = a fixed view at the origin. |
+| `chunk_size` | `32` | Chunk side, in cells. Smaller chunks build faster; bigger ones mean fewer nodes to sort. |
+| `margin` | `128` | Px around the view where chunks are built ahead. Chunks are freed beyond twice this. |
+| `build_budget_ms` | `2.0` | Time per frame for building chunks ahead. It always builds at least one queued chunk per frame. |
+
+The map is split into `chunk_size` squares, and each chunk gets its own `TileMapLayer` per biome: an internal child of the biome that copies its tile set, sorting and lighting and is never saved. A Y-sorted `TileMapLayer` draws one canvas item per row, so with one big layer per biome every new column of cells redraws every row; a chunk is built or freed without touching the others.
+
+Chunks that are already on screen are built at once, so the view never shows holes. Chunks within `margin` of the view are built ahead, nearest first, within `build_budget_ms`. If the terrain hitches at the screen edge while moving fast, raise `margin`.
 
 ### LayeredTerrainBiome
 A `TileMapLayer`; these are its own properties. The terrain sets its position and sorting.

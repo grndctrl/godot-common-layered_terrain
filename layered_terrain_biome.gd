@@ -54,9 +54,33 @@ func raise_at(cell: Vector2i) -> int:
 	return clampi(floori(n * (amplitude + 1)), 0, amplitude)
 
 
-## Puts this biome's tile, raised by the relief, on `cell`.
-func place(cell: Vector2i) -> void:
-	set_cell(cell, source_id, Vector2i.ZERO, raise_at(cell))
+## Puts this biome's tile, raised by the relief, on `cell` of `layer`, or of this layer if none is given.
+func place(cell: Vector2i, layer: TileMapLayer = null) -> void:
+	if not layer:
+		layer = self
+	layer.set_cell(cell, source_id, Vector2i.ZERO, raise_at(cell))
+
+
+## Adds an empty layer that draws and sorts like this one, for one chunk of the map. It is an internal
+## child with no owner, so it inherits this layer's raise and is never saved.
+func add_chunk_layer() -> TileMapLayer:
+	var layer := TileMapLayer.new()
+	layer.tile_set = tile_set
+	layer.y_sort_enabled = y_sort_enabled
+	layer.y_sort_origin = y_sort_origin
+	layer.light_mask = light_mask
+	layer.visibility_layer = visibility_layer
+	layer.self_modulate = self_modulate
+	layer.use_parent_material = true
+	add_child(layer, false, INTERNAL_MODE_BACK)
+	return layer
+
+
+## Frees the layers made by `add_chunk_layer()`.
+func free_chunk_layers() -> void:
+	for child in get_children(true):
+		if child is TileMapLayer and not child.owner:
+			child.queue_free()
 
 
 ## Gives every tile of this biome's atlas source alternatives 1..amplitude:

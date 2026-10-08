@@ -1,10 +1,11 @@
 [gd_resource type="TileSet" format=3 uid="uid://cbjhvxwbhq4a5"]
 
-[ext_resource type="Texture2D" uid="uid://di1svsmqylnde" path="res://common/layered_terrain/example/water.png" id="1_q40mc"]
-[ext_resource type="Texture2D" uid="uid://yo0ri3n7vwoy" path="res://common/layered_terrain/example/water_n.png" id="2_bxilo"]
-[ext_resource type="Texture2D" uid="uid://c62dhurteqe5u" path="res://common/layered_terrain/example/sand.png" id="3_ktl3n"]
-[ext_resource type="Texture2D" uid="uid://cde24uhqx75p4" path="res://common/layered_terrain/example/grass.png" id="5_p4l2a"]
-[ext_resource type="Texture2D" uid="uid://40ggm267uh4s" path="res://common/layered_terrain/example/grass_n.png" id="6_aorej"]
+[ext_resource type="Texture2D" uid="uid://dne0qxqrybxmm" path="res://common/layered_terrain/example/water.png" id="1_q40mc"]
+[ext_resource type="Texture2D" uid="uid://leh8b76q6aoj" path="res://common/layered_terrain/example/water_n.png" id="2_bxilo"]
+[ext_resource type="Texture2D" uid="uid://1a7bordgfgju" path="res://common/layered_terrain/example/sand.png" id="3_ktl3n"]
+[ext_resource type="Texture2D" uid="uid://i7qqe05qyoiw" path="res://common/layered_terrain/example/sand_n.png" id="4_q40mc"]
+[ext_resource type="Texture2D" uid="uid://w3bv5uf4sisn" path="res://common/layered_terrain/example/grass.png" id="5_p4l2a"]
+[ext_resource type="Texture2D" uid="uid://df7ve1j71qc7u" path="res://common/layered_terrain/example/grass_n.png" id="6_aorej"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_dr3y5"]
 diffuse_texture = ExtResource("1_q40mc")
@@ -34,28 +35,35 @@ texture_region_size = Vector2i(24, 24)
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_q40mc"]
 diffuse_texture = ExtResource("3_ktl3n")
+normal_texture = ExtResource("4_q40mc")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x8ced"]
 texture = SubResource("CanvasTexture_q40mc")
 texture_region_size = Vector2i(24, 24)
-0:0/next_alternative_id = 3
+0:0/next_alternative_id = 4
 0:0/0 = 0
 0:0/1 = 1
 0:0/1/texture_origin = Vector2i(0, 1)
 0:0/2 = 2
 0:0/2/texture_origin = Vector2i(0, 2)
-2:0/next_alternative_id = 3
+0:0/3 = 3
+0:0/3/texture_origin = Vector2i(0, 3)
+2:0/next_alternative_id = 4
 2:0/0 = 0
 2:0/1 = 1
 2:0/1/texture_origin = Vector2i(0, 1)
 2:0/2 = 2
 2:0/2/texture_origin = Vector2i(0, 2)
-1:0/next_alternative_id = 3
+2:0/3 = 3
+2:0/3/texture_origin = Vector2i(0, 3)
+1:0/next_alternative_id = 4
 1:0/0 = 0
 1:0/1 = 1
 1:0/1/texture_origin = Vector2i(0, 1)
 1:0/2 = 2
 1:0/2/texture_origin = Vector2i(0, 2)
+1:0/3 = 3
+1:0/3/texture_origin = Vector2i(0, 3)
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_bxilo"]
 diffuse_texture = ExtResource("5_p4l2a")

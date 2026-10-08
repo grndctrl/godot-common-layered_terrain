@@ -87,6 +87,11 @@ func regenerate() -> void:
 		# Cancel the raise when sorting, so all layers sort together by grid row.
 		biome.y_sort_origin = base_height + i * layer_height
 		biome.ensure_raises()
+	_populate()
+
+
+## Places the cells once the biomes are laid out. `InfiniteLayeredTerrain` streams chunks instead.
+func _populate() -> void:
 	_fill(_bounds())
 
 
@@ -95,24 +100,27 @@ func _bounds() -> Rect2i:
 	return Rect2i(Vector2i.ZERO, map_size)
 
 
-## Generates every cell in `rect` that isn't in `skip`.
-func _fill(rect: Rect2i, skip := Rect2i()) -> void:
+## Generates every cell in `rect`.
+func _fill(rect: Rect2i) -> void:
 	var biomes := _biomes()
 	if not noise or biomes.is_empty():
 		return
 	var thresholds := _thresholds(biomes)
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
-			if not skip.has_point(Vector2i(x, y)):
-				_generate_cell(Vector2i(x, y), biomes, thresholds)
+			var cell := Vector2i(x, y)
+			var i := _biome_at(cell, thresholds)
+			if i >= 0:
+				biomes[i].place(cell)
 
 
-func _generate_cell(cell: Vector2i, biomes: Array[LayeredTerrainBiome], thresholds: PackedFloat32Array) -> void:
+## The index of the biome `cell` belongs to, or -1 if its elevation is outside the thresholds.
+func _biome_at(cell: Vector2i, thresholds: PackedFloat32Array) -> int:
 	# Noise is roughly -1..1; map it to 0..1 so it can be compared with the thresholds.
 	var elevation := (noise.get_noise_2dv(cell) + 1.0) * 0.5
 	if elevation < lower_threshold or elevation > upper_threshold:
-		return
-	biomes[_biome_index(elevation, thresholds)].place(cell)
+		return -1
+	return _biome_index(elevation, thresholds)
 
 
 ## The biome children, in child order: lowest elevation first.
